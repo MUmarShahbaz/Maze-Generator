@@ -1,2 +1,7 @@
-key.txt
-dict.txt
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+keys/
