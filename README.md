@@ -1,9 +1,11 @@
 # TreeCrypt
 
-## Basic Info
 - Creates a random structure of nodes pointing to one another and converts them into an array.
 - Maps each letter into a set of directions to a node which contains the equivalent letter inside it.
 - During decryption, the directions can be used to find a node and extract the letter inside it.
+
+## Requirements
+- Runs on Python 3.10+
 
 
 ## Detailed Working
@@ -21,16 +23,19 @@
 - The special character "`|`" is used to represent whitespace.
   - Regardless of the number of spaces in the input, all contiguous whitespace is encoded as a single "`|`".
 
-
-
 # How to use
 
+## 0. Install
+Install it by simply running
+```shell
+pip install treecrypt
+```
+
 ## 1. Import
-Download the `TreeCrypt.py` file from the repository into your workspace.
 
 Inside your python code add the line
 ```python
-from TreeCrypt import KeyMaker, Crypter
+from treecrypt import KeyMaker, Crypter
 ```
 
 This will import the key generator and the crypt-maker as classes and these can be used to do the encryption
@@ -45,6 +50,16 @@ The charset used must be a list of characters which are exactly one letter and a
 ```python
 customCharset = ['A' , 'B', 'C', ....]
 myKeyMaker = KeyMaker(customCharset)
+```
+
+If you don't give any parameters then the following is used:
+```python
+DefaultCharset = [
+  'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+  'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+  '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '_', '+', '=', '{', '}', '[', ']', '|', ':', ';', '"', "'", ',', '.', '?', '/'
+]
 ```
 
 Then generate the key using
@@ -71,6 +86,12 @@ def Export(self, keyFile="key.txt", dictFile="dict.txt"):
 # You can ignore the parameters as they have defaults
 ```
 
+You can also get them directly inside the code using
+```python
+Key = myKeyMaker.GetKey()
+Dictionary = myKeyMaker.Dictionary()
+```
+
 The parameters are the filenames of the exported key and dictionary.
 
 ## 4. Create a crypter and Import the key
@@ -89,6 +110,15 @@ def Import(self, keyFile="key.txt", dictFile="dict.txt"):
 # You can ignore the parameters if the inputs have the default file names
 ```
 
+Additionally, if you only have the key and no dictionary then just do:
+
+```python
+import ast
+with open('KEY1.txt') as f:
+  # Use ast literal eval
+  myCrypter.SetKey(ast.literal_eval(f.readline()))
+```
+
 ## 5. Start Crypting!!
 Now you can encrypt and decrypt as you wish. However make sure the input doesn't contain anything outside of the custom charset used by the KeyMaker
 
@@ -99,15 +129,3 @@ doubleCheck = myCrypter.Decrypt(cipher)
 print(cipher)
 print(doubleCheck)
 ```
-
-## Additional Function
-Both classes have a `DarwKey()` function which displays a graphical version of the key
-```python
-myCrypter.DrawKey()
-```
-
-# Why to use??
-
-Don't want to save your passwords online? Save them locally as a .txt file and use TreeCrypt to encrypt them.
-
-<br class="big-spacer">
