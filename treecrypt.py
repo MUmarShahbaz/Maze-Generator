@@ -1,6 +1,5 @@
 import random
 import ast
-import os
 
 class Node:
     def __init__(self, x, y, index, ParentIndex):
@@ -44,9 +43,9 @@ class KeyMaker:
     def GetDictionary(self):
         return self.dictionary
         
-    def GenerateKey(self, Depth, MaxDist, MinDist=1):
-        def AttachLevels(self, node, level, start, MinDist, MaxDist):
-            def AttachRandom(self, AttachToNODE, MaxDist, MinDist=1, tries=20):
+    def GenerateKey(self, Depth, MaxDist, MinDist=1, livePrint=False):
+        def AttachLevels(self, node, level, start, MinDist, MaxDist, livePrint):
+            def AttachRandom(self, AttachToNODE, MaxDist, MinDist=1, livePrint=False, tries=20):
                 while True:
                     choices = ['u', 'l', 'd', 'r']
                     random.shuffle(choices)
@@ -117,26 +116,26 @@ class KeyMaker:
                 self.items[free].SetChar(character)
                 self.dictionary[character].append(free)
                 self.used.extend(newUsed)
+                if livePrint:
+                    print(len(self.items))
 
             if start == level:
                 return
-            AttachRandom(self, node, MaxDist, MinDist)
-            AttachRandom(self, node, MaxDist, MinDist)
-            AttachRandom(self, node, MaxDist, MinDist)
+            AttachRandom(self, node, MaxDist, MinDist, livePrint=livePrint)
+            AttachRandom(self, node, MaxDist, MinDist, livePrint=livePrint)
+            AttachRandom(self, node, MaxDist, MinDist, livePrint=livePrint)
             childNodes = [node.up, node.left, node.down, node.right]
             random.shuffle(childNodes)
             for child in childNodes:
                 if child:
-                    AttachLevels(self, self.items[child], level, start + 1, MinDist, MaxDist)
+                    AttachLevels(self, self.items[child], level, start + 1, MinDist, MaxDist, livePrint)
         self.items = [Node(0, 0, 0, None)]
         self.used = [[0, 0]]
         self.dictionary = {char: [] for char in self.chars}
-        AttachLevels(self, self.items[0], Depth, 0, MinDist, MaxDist)
+        AttachLevels(self, self.items[0], Depth, 0, MinDist, MaxDist, livePrint)
         print(f"Finished Generating key, created {len(self.items)} nodes")
     
     def Export(self, keyFile="key.txt", DictFile="dict.txt"):
-        os.makedirs(os.path.dirname(keyFile), exist_ok=True)
-        os.makedirs(os.path.dirname(DictFile), exist_ok=True)
         with open(keyFile, 'w', encoding='utf-8') as f:
             f.write(f"{self.GetKey()}")
             f.close()
