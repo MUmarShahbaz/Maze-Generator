@@ -1,5 +1,8 @@
 from treecrypt import KeyMaker, Crypter
 import os
+import time
+
+start_time = time.time()
 
 try:
     open('keys/key.txt', 'r')
@@ -20,3 +23,4 @@ print(cipher)
 cipher = input("Enter text to decrypt: ")
 plainText = myCrypter.Decrypt(cipher)
 print(plainText)
+print(f"It took {time.time()-start_time} seconds for the algorithm to run")
