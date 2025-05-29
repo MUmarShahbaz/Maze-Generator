@@ -1,6 +1,8 @@
 import random
 import ast
 
+__version__ = "1.2.2"
+
 class Node:
     def __init__(self, x, y, index, ParentIndex):
         self.char = None
@@ -224,3 +226,102 @@ class Crypter:
             out = out[:-1] + '|'
         out = out[:-1]
         return out
+
+# Terminal Code
+import argparse
+parser = argparse.ArgumentParser(description="A Tree-of-Nodes based encryption algorithm")
+parser.add_argument('-v', '--version', action='version', version=f'%(prog)s {__version__}')
+
+subparsers = parser.add_subparsers(dest='mode', required=True)
+
+# Key Generation
+keygen = subparsers.add_parser('keygen', help='Generates encryption key')
+keygen.add_argument("--depth", metavar=" ", help="Key generator depth",type=int, required=True)
+keygen.add_argument("--min", metavar=" ", help="Minimum distance between connected nodes",type=int, default=0)
+keygen.add_argument("--max", metavar=" ", help="Maximum distance between connected nodes",type=int, default=5)
+keygen.add_argument("-k","--key", metavar=" ", help="File path to the key", required=True)
+keygen.add_argument("-d","--dictionary", metavar=" ", help="File path to the dictionary", required=True)
+keygen.add_argument("-l","--live", help="Print number of nodes as they are being generated", action="store_true", default=False)
+keygen.add_argument("-c","--charset", metavar=" ", help="File path to the character set")
+
+# Encryption
+encrypt = subparsers.add_parser('encrypt', help="Encrypts raw text data")
+encrypt.add_argument("-k","--key", metavar=" ", help="File path to the key", required=True)
+encrypt.add_argument("-d","--dictionary", metavar=" ", help="File path to the dictionary", required=True)
+enc_input = encrypt.add_mutually_exclusive_group(required=True)
+enc_input.add_argument('-i', '--input', metavar=" ", help="Input string")
+enc_input.add_argument('-f', '--file', metavar=" ", help="File path to input file")
+encrypt.add_argument('-o', "--output", metavar=" ", help="File path to store cipher")
+
+# Decryption
+decrypt = subparsers.add_parser('decrypt', help="Decrypts cipher")
+decrypt.add_argument("-k","--key", metavar=" ", help="File path to the key", required=True)
+decrypt.add_argument("-d","--dictionary", metavar=" ", help="File path to the dictionary", required=True)
+dec_input = decrypt.add_mutually_exclusive_group(required=True)
+dec_input.add_argument('-i', '--input', metavar=" ", help="Input string")
+dec_input.add_argument('-f', '--file', metavar=" ", help="File path to input file")
+decrypt.add_argument('-o', "--output", metavar=" ", help="File path to store text")
+
+args = parser.parse_args()
+
+if args.mode == "keygen":
+    if args.charset:
+        with open(args.charset, 'r') as f:
+            charset = ast.literal_eval(f.readline())
+        newKey = KeyMaker(charset)
+    else:
+        newKey = KeyMaker()
+    newKey.GenerateKey(args.depth, args.max, args.min, args.live)
+    newKey.Export(args.key, args.dictionary)
+
+if args.mode == "encrypt":
+    crypter = Crypter()
+    crypter.Import(args.key, args.dictionary)
+    if args.input:
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(crypter.Encrypt(args.input))
+        else:
+            print(crypter.Encrypt(args.input))
+    elif args.file:
+        if args.output:
+            with open(args.file, 'r') as inFile, open(args.output, 'w') as outFile:
+                for line in inFile:
+                    text = line.strip()
+                    cipher = crypter.Encrypt(text)
+                    outFile.write(cipher + "\n")
+        else:
+            with open(args.file, 'r') as inFile:
+                for line in inFile:
+                    text = line.strip()
+                    cipher = crypter.Encrypt(text)
+                    print(cipher)
+
+if args.mode == "decrypt":
+    crypter = Crypter()
+    crypter.Import(args.key, args.dictionary)
+    if args.input:
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(crypter.Decrypt(args.input))
+        else:
+            print(crypter.Decrypt(args.input))
+    elif args.file:
+        if args.output:
+            with open(args.file, 'r') as inFile, open(args.output, 'w') as outFile:
+                for line in inFile:
+                    cipher = line.strip()
+                    if cipher:
+                        text = crypter.Decrypt(cipher)
+                        outFile.write(text + "\n")
+                    else:
+                        outFile.write("\n")
+        else:
+            with open(args.file, 'r') as inFile:
+                for line in inFile:
+                    cipher = line.strip()
+                    if cipher:
+                        text = crypter.Decrypt(cipher)
+                        print(text)
+                    else:
+                        print()
