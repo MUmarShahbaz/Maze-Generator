@@ -23,7 +23,37 @@
 - The special character "`|`" is used to represent whitespace.
   - Regardless of the number of spaces in the input, all contiguous whitespace is encoded as a single "`|`".
 
-# How to use
+# How to use on Terminal
+
+| Command Name   | Terminal                             |
+|:---------------|:-------------------------------------|
+| Help           | `python -m treecrypt -h`             |
+| Version        | `python -m treecrypt -v`             |
+| Key Generation | `python -m treecrypt keygen {args}`  |
+| Encryption     | `python -m treecrypt encrypt {args}` |
+| Decryption     | `python -m treecrypt decrypt {args}` |
+
+## Key Generation arguments
+| Argument Name | Terminal  | Type    | Value                                            | Required |
+|:--------------|:---------:|:-------:|:----------------------------------------------------|:-----:|
+| Key           | `-k`      | String  | File Path to output the encryption key              | True  |
+| Dictionary    | `-d`      | String  | File Path to output the encryption dictionary       | True  |
+| Depth         | `--depth` | Integer | Key Generator depth                                 | True  |
+| Min           | `--min`   | Integer | Minimum distance between connected nodes            | False |
+| Max           | `--max`   | Integer | Maximum distance between connected nodes            | False |
+| Charset       | `-c`      | String  | File path to a python list of the charset           | False |
+| Live Print    | `-l`      | Flag    | no_Value, Prints the number of nodes generated live | False |
+
+## Encryption/Decryption arguments
+| Argument Name | Terminal | Type   | Value                                           | Required     |
+|:--------------|:--------:|:------:|:------------------------------------------------|:------------:|
+| Key           | `-k`     | String | File Path to the encryption key                 | True         |
+| Dictionary    | `-d`     | String | File Path to the encryption dictionary          | True         |
+| Input         | `-i`     | String | Input plain text to encrypt/decrypt             | `-i` or `-f` |
+| File          | `-f`     | String | File path to plain text file to encrypt/decrypt | `-i` or `-f` |
+| Output        | `-o`     | String | File path to store results                      | False        |
+
+# How to use in Code
 
 ## 0. Install
 Install it by simply running

@@ -4,6 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "TreeCrypt"
+dynamic = ["version"]
 description = "A node-tree based encryption algorithm."
 readme = "README.md"
 requires-python = ">=3.10"
